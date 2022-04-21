@@ -35,16 +35,18 @@ model EventType {
 }
 
 model Event {
-  id          String    @id @default(cuid())
-  notes       String?
-  user        User      @relation(fields: [userId], references: [id])
-  userId      String
-  eventType   EventType @relation(fields: [eventTypeId], references: [id])
-  eventTypeId Int
-  attendee    Attendee  @relation(fields: [attendeeId], references: [id])
-  attendeeId  String
-  company     Company?  @relation(fields: [companyId], references: [id])
-  companyId   String?
+  id            String    @id @default(cuid())
+  startDateTime DateTime
+  endDateTime   DateTime
+  notes         String?
+  user          User      @relation(fields: [userId], references: [id])
+  userId        String
+  eventType     EventType @relation(fields: [eventTypeId], references: [id])
+  eventTypeId   Int
+  attendee      Attendee  @relation(fields: [attendeeId], references: [id])
+  attendeeId    String
+  company       Company?  @relation(fields: [companyId], references: [id])
+  companyId     String?
 }
 
 model Attendee {

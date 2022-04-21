@@ -8,10 +8,10 @@
 
 export const EventTypes = [
   {
-    title: "15 Min Meeting",
-    url: "/15-min-meeting",
-    duration: 15,
-    description: "A brief meeting for 15 minutes discussions.",
+    title: "30 Min Meeting",
+    url: "/30-min-meeting",
+    duration: 30,
+    description: "A brief meeting for 30 minutes discussions.",
     location: "Google Meet",
     meetingLink: "https://meet.google.com/vqi-xnvk-uda",
     availability: "Mon - Fri, 9:00 AM - 5:00 PM",
@@ -19,7 +19,7 @@ export const EventTypes = [
   {
     title: "1 Hour Meeting",
     url: "/1-hr-meeting",
-    duration: 15,
+    duration: 60,
     description: "A one hour meeting for different discussions.",
     location: "Google Meet",
     meetingLink: "https://meet.google.com/vqi-xnvk-uda",
@@ -30,7 +30,7 @@ export const EventTypes = [
 export const Users = [
   {
     name: "Anonymous User",
-    email: "anonymouse.user@gmail.com",
+    email: "default.user@gmail.com",
     password: "$2a$04$yuTrGkc0TwepzAc.rOImauOMASkHx0jP6wvVQtY7rerVpwS8LQlfC",
   },
   {

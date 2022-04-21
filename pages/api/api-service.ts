@@ -84,7 +84,7 @@ const createBooking = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // Get the body request from the form
   const data = req.body;
-  const { name, email, companyName, companyEmail, notes } = data;
+  const { startDateTime, endDateTime, name, email, companyName, companyEmail, notes } = data;
 
   //Current authenticated user session
   // const session = await getSession({ req });
@@ -94,22 +94,15 @@ const createBooking = async (req: NextApiRequest, res: NextApiResponse) => {
   //   // return;
   // }
 
-  // Append email of authenticated user or default to `anonymous.user@gmail.com`
-  // const userEmail = session?.user?.email || "anonymous.user@gmail.com";
-  const userEmail = "anonymous.user@gmail.com";
+  // Append email of authenticated user or default to `default.user@gmail.com`
+  // const userEmail = session?.user?.email || "default.user@gmail.com";
+  const userEmail = "default.user@gmail.com";
   // let userEmail = "";
   // if (!session) {
-  //   userEmail = "anonymous.user@gmail.com";
+  //   userEmail = "default.user@gmail.com";
   // } else {
   //   userEmail = session?.user?.email;
   // }
-
-  // Get the first event type from `EventType` table
-  // const eventType = await prisma.eventType.findFirst({
-  //   where: {
-  //     id: 1,
-  //   },
-  // });
 
   // const userRecord = await prisma.user.findFirst({
   //   where: { email: userEmail },
@@ -117,43 +110,33 @@ const createBooking = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // Validate email inputs
   if (!email || !email.includes("@")) {
-    // if (!email || !email.includes("@") || !companyEmail || !companyEmail.includes("@")) {
     res.status(422).json({ message: "Invalid email format." });
     return;
   }
 
   // Create a new event record
-  try {
-    const createdEvent = await prisma.event.create({
-      data: {
-        notes: notes,
-        user: { connect: { email: userEmail } },
-        eventType: { connect: { id: 1 } },
-        attendee: { create: { name: name, email: email.toLowerCase() } },
-        company: { create: { name: companyName, email: companyEmail.toLowerCase() } },
-      },
-      include: {
-        user: true, // Include the user in the returned object
-        eventType: true,
-        attendee: true,
-        company: true,
-      },
-    });
+  const createdEvent = await prisma.event.create({
+    data: {
+      startDateTime: startDateTime,
+      endDateTime: endDateTime,
+      notes: notes,
+      user: { connect: { email: userEmail } },
+      eventType: { connect: { id: 1 } },
+      attendee: { create: { name: name, email: email.toLowerCase() } },
+      company: { create: { name: companyName, email: companyEmail.toLowerCase() } },
+    },
+    include: {
+      user: true, // Include the user in the returned object
+      eventType: true,
+      attendee: true,
+      company: true,
+    },
+  });
 
-    // Return response object
-    res.status(201).json({
-      data: createdEvent,
-      message: "Event created successfully.",
-    });
-  } catch (error) {
-    // return the error
-    // let message;
-    // if (error instanceof Error) message = error.message;
-    // else message = String(error);
-
-    // return res.json({
-    //   message: reportError({ message }),
-    // });
-    console.error(error);
-  }
+  // Return response object
+  // res.status(201).json(createdEvent);
+  res.status(201).json({
+    data: createdEvent,
+    message: "Event created successfully.",
+  });
 };

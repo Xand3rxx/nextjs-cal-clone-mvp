@@ -35,7 +35,6 @@ A Minimum Viable Product (MVP) of a scheduling tool like [https://cal.com](cal.c
 3. Set the `provider` of the `datasource` block in `schema.prisma` to match `postgresql` database.
 
 4. Run `npx prisma db push` executes the changes required to make your database schema reflect the state of your Prisma schema.
-   
 5. Seed the database using `npx prisma db seed`.
 
 6. Run `npx prisma studio` to use Prisma Studio's interface and modify the seeded `User` and `EventType` records(if need be).

@@ -4,9 +4,9 @@ const Footer = () => {
       <div className="p-6 text-center backgroundSlateCustom">
         <span>© {new Date().getFullYear()} </span>
         <a className="font-semibold text-white" href="#">
-          Cal.com(Clone)
-        </a>
-        <span>All Rights Reserved</span>
+          Cal.com(Clone).
+        </a>{" "}
+        <span>All Rights Reserved.</span>
       </div>
     </footer>
   );

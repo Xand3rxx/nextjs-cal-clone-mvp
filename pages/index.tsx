@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+// import Router from "next/router";
 import React, { useState, useEffect } from "react";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
@@ -10,10 +10,6 @@ import DateTimePicker from "react-datetime-picker/dist/entry.nostyle";
 import { FaInfoCircle, FaClock, FaLink, FaLocationArrow, FaRegCalendarAlt } from "react-icons/fa";
 
 import { routes } from "../helpers/config/constants";
-
-// import prisma from "../helpers/prisma";
-
-const prisma = new PrismaClient();
 
 // Type cast props
 export type EventProps = {
@@ -36,13 +32,8 @@ export type IconProps = {
  * @return props: object
  */
 export const getServerSideProps: GetServerSideProps = async () => {
-  const eventType = await prisma.eventType.findFirst({
-    where: {
-      id: 1,
-    },
-  });
-
-  console.log("Result:", JSON.stringify(eventType));
+  const eventTypeRequest = await fetch("http://localhost:3330/api/event-type");
+  const eventType = await eventTypeRequest.json();
 
   return {
     props: eventType,
@@ -65,6 +56,8 @@ const Index: React.FC<EventProps> = (props) => {
   const [displayCompany, setDisplayCompany] = useState(false);
 
   // Form constants
+  const [startDateTime, setStartDateTime] = useState("");
+  const [endDateTime, setEndDateTime] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -77,13 +70,16 @@ const Index: React.FC<EventProps> = (props) => {
    * @return boolean true
    */
   const onChange = (value: any) => {
-    console.log(value);
     setTimeout(() => {
       setCalendarValue(calendarValue);
     }, 2000);
     setDisplayCalendar(!displayCalendar);
     setIsBookinPage(!isBookinPage);
     setIsBookingConfirmationPage(!isBookingConfirmationPage);
+    setStartDateTime(value);
+    const dt = new Date(value);
+    const newDateTime = dt.setMinutes(dt.getMinutes() + props?.duration) as any;
+    setEndDateTime(newDateTime);
   };
 
   /**
@@ -104,22 +100,34 @@ const Index: React.FC<EventProps> = (props) => {
     if (session) window.location.replace(routes.dashboard);
   }, [loading, session]);
 
+  const formReset = () => {
+    setStartDateTime("");
+    setName("");
+    setEmail("");
+    setCompanyName("");
+    setCompanyEmail("");
+    setNotes("");
+  };
+
   const bookMeeting = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    // try {
-    const body = { name, email, companyName, companyEmail, notes };
-    // alert(JSON.stringify(body));
+    try {
+      const body = { name, email, companyName, companyEmail, notes, startDateTime, endDateTime };
+      const payload = await fetch(routes.bookMeeting, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
 
-    const response = await fetch(routes.bookMeeting, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    console.log("Response: ", response);
-    // } catch (error) {
-    //   console.error(error);
-    // }
+      const response = await payload.json();
+      // console.log(response.message);
+      // console.log(response.data);
+      console.log(response);
+      console.log(payload);
+      formReset();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -130,7 +138,6 @@ const Index: React.FC<EventProps> = (props) => {
       <Link href="/auth/signup">
         <a className="p-1 ml-2 text-white bg-blue-800">SIGN UP</a>
       </Link>
-      <h1 className="py-4 text-3xl font-bold text-white">This: {props?.title}</h1>
 
       <main className="max-w-5xl min-h-full rounded-sm border-color-custom backgroundSlateCustom">
         <div className="px-4 sm:flex sm:p-4 sm:py-5">
@@ -158,11 +165,11 @@ const Index: React.FC<EventProps> = (props) => {
             {displayCalendar && (
               <p className="mb-2 text-emerald-500">
                 <Icon name={<FaRegCalendarAlt />} />
-                {calendarValue.toString()}
+                {startDateTime.toString()}
               </p>
             )}
           </div>
-          <form onSubmit={bookMeeting}>
+          <form onSubmit={bookMeeting} id="create-booking-form">
             {isBookinPage && (
               <div className="mt-8 sm:mt-0 sm:min-w-[455px] w-full sm:w-1/2 sm:pl-4 sm:pr-6 sm:dark:border-gray-700 md:w-1/3">
                 <DateTimePicker
@@ -180,8 +187,18 @@ const Index: React.FC<EventProps> = (props) => {
             )}
             {isBookingConfirmationPage && (
               <div className="mt-8 sm:mt-0 sm:min-w-[455px] w-full sm:w-1/2 sm:pl-4 sm:pr-6 text-white md:w-1/3">
-                {/* <h1> {calendarValue.toString()}</h1> */}
-
+                <input
+                  type="hidden"
+                  name="startDateTime"
+                  className="hidden"
+                  onChange={(e) => setStartDateTime(startDateTime)}
+                />
+                <input
+                  type="hidden"
+                  name="endDateTime"
+                  className="hidden"
+                  onChange={(e) => setEndDateTime(endDateTime)}
+                />
                 <div className="mb-4">
                   <label htmlFor="name" className="block text-sm font-medium text-white">
                     Your Name
