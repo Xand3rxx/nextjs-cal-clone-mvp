@@ -22,7 +22,7 @@ export default function Login({ csrfToken }: ServerSideProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const callbackUrl =
-    typeof router.query?.callbackUrl === "string" ? router.query.callbackUrl : routes.dashboard;
+    typeof router.query?.callbackUrl === "string" ? router.query.callbackUrl : routes.upcomingBooking;
 
   async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
@@ -51,35 +51,6 @@ export default function Login({ csrfToken }: ServerSideProps) {
   }
 
   return (
-    // <form onSubmit={handleSubmit}>
-    //   <input name="csrfToken" type="hidden" defaultValue={csrfToken || undefined} hidden />
-    //   <input
-    //     id="email"
-    //     name="email"
-    //     type="email"
-    //     placeholder="email"
-    //     required
-    //     value={email}
-    //     onInput={(e) => setEmail(e.currentTarget.value)}
-    //     className="block border border-neutral-300 focus:ring-neutral-900"
-    //   />
-    //   <input
-    //     id="password"
-    //     name="password"
-    //     type="password"
-    //     placeholder="password"
-    //     autoComplete="current-password"
-    //     required
-    //     value={password}
-    //     onInput={(e) => setPassword(e.currentTarget.value)}
-    //     className="block border border-neutral-300 focus:ring-neutral-900"
-    //   />
-
-    //   <button type="submit" disabled={isSubmitting} className="p-1 text-white bg-blue-800">
-    //     SIGN IN
-    //   </button>
-    // </form>
-
     <div className="flex min-h-screen flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="justify-center">

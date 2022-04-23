@@ -1,7 +1,7 @@
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-// import Router from "next/router";
+import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
@@ -32,7 +32,7 @@ export type IconProps = {
  * @return props: object
  */
 export const getServerSideProps: GetServerSideProps = async () => {
-  const eventTypeRequest = await fetch("http://localhost:3330/api/event-type");
+  const eventTypeRequest = await fetch(`http://localhost:3330/${routes.getDefaultEventType}`);
   const eventType = await eventTypeRequest.json();
 
   return {
@@ -45,7 +45,7 @@ export const Icon = ({ name }: IconProps) => (
   <span className="mr-[10px] ml-[2px] -mt-0 inline-block h-3.5 w-3.5 text-gray-400">{name}</span>
 );
 
-const Index: React.FC<EventProps> = (props) => {
+const Index: React.FC<EventProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   //Declare contants
   const { data: session, status } = useSession();
   const loading = status === "loading";
@@ -63,6 +63,7 @@ const Index: React.FC<EventProps> = (props) => {
   const [companyName, setCompanyName] = useState("");
   const [companyEmail, setCompanyEmail] = useState("");
   const [notes, setNotes] = useState("");
+  const router = useRouter();
 
   /**
    * @description set dispalay of elements to true
@@ -78,8 +79,8 @@ const Index: React.FC<EventProps> = (props) => {
     setIsBookingConfirmationPage(!isBookingConfirmationPage);
     setStartDateTime(value);
     const dt = new Date(value);
-    const newDateTime = dt.setMinutes(dt.getMinutes() + props?.duration) as any;
-    setEndDateTime(newDateTime);
+    dt.setMinutes(dt.getMinutes() + props?.duration);
+    setEndDateTime(dt);
   };
 
   /**
@@ -97,21 +98,22 @@ const Index: React.FC<EventProps> = (props) => {
   };
 
   useEffect(() => {
-    if (session) window.location.replace(routes.dashboard);
+    if (session) window.location.replace(routes.upcomingBooking);
   }, [loading, session]);
 
-  const formReset = () => {
-    setStartDateTime("");
-    setName("");
-    setEmail("");
-    setCompanyName("");
-    setCompanyEmail("");
-    setNotes("");
-  };
+  // const formReset = () => {
+  //   setStartDateTime("");
+  //   setName("");
+  //   setEmail("");
+  //   setCompanyName("");
+  //   setCompanyEmail("");
+  //   setNotes("");
+  // };
 
   const bookMeeting = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     try {
+      // const router = useRouter();
       const body = { name, email, companyName, companyEmail, notes, startDateTime, endDateTime };
       const payload = await fetch(routes.bookMeeting, {
         method: "POST",
@@ -120,11 +122,11 @@ const Index: React.FC<EventProps> = (props) => {
       });
 
       const response = await payload.json();
-      // console.log(response.message);
-      // console.log(response.data);
-      console.log(response);
-      console.log(payload);
-      formReset();
+
+      router.push({
+        pathname: routes.confirmationPage,
+        query: { id: response.data.id },
+      });
     } catch (error) {
       console.error(error);
     }
@@ -191,12 +193,14 @@ const Index: React.FC<EventProps> = (props) => {
                   type="hidden"
                   name="startDateTime"
                   className="hidden"
+                  value={startDateTime}
                   onChange={(e) => setStartDateTime(startDateTime)}
                 />
                 <input
                   type="hidden"
                   name="endDateTime"
                   className="hidden"
+                  value={endDateTime}
                   onChange={(e) => setEndDateTime(endDateTime)}
                 />
                 <div className="mb-4">

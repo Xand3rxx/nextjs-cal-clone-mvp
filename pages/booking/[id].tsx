@@ -1,4 +1,35 @@
-const Confirmation = () => {
+import { GetServerSideProps } from "next";
+import Link from "next/link";
+
+import { routes } from "../../helpers/config/constants";
+
+/**
+ * @description Get the event information on the `Event` table
+ * @param id: string
+ * @return props: object
+ */
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const id = context;
+  const eventRequest = await fetch(`http://localhost:3330${routes.getEvent}/${id.params?.id}`);
+  const event = await eventRequest.json();
+  return {
+    props: event,
+  };
+};
+
+/**
+ * @description Convert datetime to return time only
+ * @param dateString: string
+ * @return time: string
+ */
+const convertDate = (dateString: string) => {
+  const today = new Date(dateString);
+  const hh = String(today.getHours()).padStart(2, "0");
+  const mm = String(today.getMinutes() + 1).padStart(2, "0"); //January is 0!
+  return hh + ":" + mm;
+};
+
+const Confirmation = (props: any) => {
   return (
     <section className="h-screen">
       <main className="mx-auto max-w-3xl rounded-sm border-color-custom">
@@ -35,12 +66,15 @@ const Confirmation = () => {
                     </div>
                     <div className="border-[#292929] mt-4 grid grid-cols-3 border-t border-b py-4 text-left text-gray-300">
                       <div className="font-medium">What</div>
-                      <div className="col-span-2 mb-6">Quick Chat between Anthony Joboy and Dummy Form</div>
+                      <div className="col-span-2 mb-6">
+                        Quick Chat between {props?.user?.name} and {props?.attendee?.name}
+                      </div>
                       <div className="font-medium">When</div>
                       <div className="col-span-2">
-                        Thursday, 21 April 2022
+                        {new Date(props?.startDateTime).toUTCString()}
                         <br />
-                        10:30 - 30 mins <span className="text-white">(Africa/Lagos)</span>
+                        {convertDate(props?.startDateTime)} - {props?.eventType?.duration} mins{" "}
+                        <span className="text-white">(Africa/Lagos)</span>
                       </div>
                       <div className="mt-6 font-medium">Where</div>
                       <div className="col-span-2 mt-6">
@@ -56,7 +90,7 @@ const Confirmation = () => {
                   <div className="flex flex-grow justify-center text-center">
                     <a
                       className="mx-2 h-10 w-10 rounded-sm border px-3 py-2 border-neutral-700 text-white"
-                      href="https://calendar.google.com/calendar/r/eventedit?dates=20220421T093000Z/20220421T100000Z&amp;text=Quick Chat between Anthony Joboy and Dummy Form&amp;details=A quick video meeting&amp;location=Web%20conferencing%20details%20to%20follow%20in%20the%20confirmation%20email.">
+                      href="#">
                       <svg
                         className="-mt-1 inline-block h-4 w-4"
                         fill="currentColor"
@@ -69,7 +103,7 @@ const Confirmation = () => {
                     <a
                       className="mx-2 h-10 w-10 rounded-sm border px-3 py-2 border-neutral-700 text-white"
                       target="_blank"
-                      href="https://outlook.live.com/calendar/0/deeplink/compose?body=A%20quick%20video%20meeting&amp;enddt=2022-04-21T10:00:00Z&amp;path=%252Fcalendar%252Faction%252Fcompose&amp;rru=addevent&amp;startdt=2022-04-21T09:30:00Z&amp;subject=Quick%20Chat%20between%20Anthony%20Joboy%20and%20Dummy%20Form&amp;location=Web conferencing details to follow in the confirmation email."
+                      href="#"
                       rel="noreferrer">
                       <svg
                         className="mr-1 -mt-1 inline-block h-4 w-4"
@@ -83,7 +117,7 @@ const Confirmation = () => {
                     <a
                       className="mx-2 h-10 w-10 rounded-sm border  px-3 py-2 border-neutral-700 text-white"
                       target="_blank"
-                      href="https://outlook.office.com/calendar/0/deeplink/compose?body=A%20quick%20video%20meeting&amp;enddt=2022-04-21T10:00:00Z&amp;path=%252Fcalendar%252Faction%252Fcompose&amp;rru=addevent&amp;startdt=2022-04-21T09:30:00Z&amp;subject=Quick%20Chat%20between%20Anthony%20Joboy%20and%20Dummy%20Form&amp;location=Web conferencing details to follow in the confirmation email."
+                      href="#"
                       rel="noreferrer">
                       <svg
                         className="mr-1 -mt-1 inline-block h-4 w-4"
@@ -111,7 +145,7 @@ const Confirmation = () => {
                   </div>
                 </div>
                 <div className="pt-4 text-center text-xs border-gray-900 text-white">
-                  <a href="https://cal.com/signup">Create your own booking link with Cal.com</a>
+                  <a href={routes.register}>Create your own booking link with Cal.com(Clone)</a>
                   <form className="mt-4 flex">
                     <input
                       type="email"
@@ -122,15 +156,25 @@ const Confirmation = () => {
                       name="email"
                       id="email"
                       className="rounded-sm border py-2 px-3 focus:border-neutral-800 focus:outline-none focus:ring-1 mt-0 block w-full shadow-sm focus:ring-black border-gray-900 bg-black text-white sm:text-sm"
-                      placeholder="rick.astley@cal.com"
-                      value="dummy.form@gmail.com"
+                      placeholder={props?.attendee?.email}
+                      value={props?.attendee?.email}
                     />
                     <button
-                      type="submit"
+                      type="button"
                       className="inline-flex items-center px-4 py-2 text-base font-medium rounded-sm relative border border-transparent hover:bg-opacity-90 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-neutral-900 min-w-max">
                       Try it for free
                     </button>
                   </form>
+                </div>
+                <div className="mt-4 relative flex justify-center text-xs uppercase">
+                  <span className="bg-white px-2 text-gray-500">Already have an account?</span>
+                </div>
+                <div className="mt-4 gap-2">
+                  <Link href={routes.upcomingBooking}>
+                    <a className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-sm relative border border-transparent hover:bg-opacity-90 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-neutral-900 w-full justify-center bg-neutral-900">
+                      Back To Home
+                    </a>
+                  </Link>
                 </div>
               </div>
             </div>

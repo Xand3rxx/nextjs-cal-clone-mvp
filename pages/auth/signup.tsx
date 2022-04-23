@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import { routes } from "../../helpers/config/constants";
 
-export default function Signup(props) {
+export default function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,14 +29,14 @@ export default function Signup(props) {
     setIsSubmitting(true);
 
     return axios
-      .post("/api/auth/signup", {
+      .post(routes.register, {
         name,
         email,
         password,
       })
       .then(() => {
         alert("success");
-        window.location.replace("/");
+        window.location.replace(routes.upcomingBooking);
       })
       .catch((e) => {
         setIsSubmitting(false);
@@ -46,44 +46,6 @@ export default function Signup(props) {
   }
 
   return (
-    // <form onSubmit={handleSubmit}>
-    //   <input
-    //     id="name"
-    //     name="name"
-    //     type="text"
-    //     placeholder="name"
-    //     required
-    //     value={name}
-    //     onInput={(e) => setName(e.currentTarget.value)}
-    //     className="block border border-neutral-300 focus:ring-neutral-900"
-    //   />
-    //   <input
-    //     id="email"
-    //     name="email"
-    //     type="email"
-    //     placeholder="email"
-    //     required
-    //     value={email}
-    //     onInput={(e) => setEmail(e.currentTarget.value)}
-    //     className="block border border-neutral-300 focus:ring-neutral-900"
-    //   />
-    //   <input
-    //     id="password"
-    //     name="password"
-    //     type="password"
-    //     placeholder="password"
-    //     autoComplete="current-password"
-    //     required
-    //     value={password}
-    //     onInput={(e) => setPassword(e.currentTarget.value)}
-    //     className="block border border-neutral-300 focus:ring-neutral-900"
-    //   />
-
-    //   <button type="submit" disabled={isSubmitting} className="p-1 text-white bg-blue-800">
-    //     SIGN UP
-    //   </button>
-    // </form>
-
     <div className="flex min-h-screen items-center pb-16">
       <div className="mx-auto block max-w-7xl px-7 lg:flex">
         <div className="w-full self-center lg:w-1/2">
