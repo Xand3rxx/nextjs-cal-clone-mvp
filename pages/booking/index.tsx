@@ -3,10 +3,6 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import "react-calendar/dist/Calendar.css";
-import "react-clock/dist/Clock.css";
-import "react-datetime-picker/dist/DateTimePicker.css";
-import DateTimePicker from "react-datetime-picker/dist/entry.nostyle";
 import { FaInfoCircle, FaClock, FaLink, FaLocationArrow, FaRegCalendarAlt } from "react-icons/fa";
 
 import { routes } from "../../helpers/config/constants";
@@ -77,13 +73,32 @@ const CreateBooking: React.FC<EventProps> = (
     setTimeout(() => {
       setCalendarValue(calendarValue);
     }, 2000);
+    const dt = new Date(value);
+
+    // Convert start datetime to ISOString format
+    setStartDateTime(dt.toISOString());
+
+    // Add duration from event type to start date time
+    dt.setMinutes(dt.getMinutes() + props?.duration);
+
+    // Convert start datetime to ISOString format
+    setEndDateTime(dt.toISOString());
+  };
+
+  /**
+   * @description set dispalay of elements to true
+   * @param value: string
+   * @return details form
+   */
+  const nextHandler = () => {
+    const startDate = document.getElementById("start-date") as HTMLElement;
+    if (startDate.value === "") {
+      alert("Select a date and time for the scheduled meeting.");
+      return;
+    }
     setDisplayCalendar(!displayCalendar);
     setIsBookinPage(!isBookinPage);
     setIsBookingConfirmationPage(!isBookingConfirmationPage);
-    setStartDateTime(value);
-    const dt = new Date(value);
-    dt.setMinutes(dt.getMinutes() + props?.duration);
-    setEndDateTime(dt);
   };
 
   /**
@@ -94,6 +109,7 @@ const CreateBooking: React.FC<EventProps> = (
     setDisplayCalendar(!displayCalendar);
     setIsBookinPage(!isBookinPage);
     setIsBookingConfirmationPage(!isBookingConfirmationPage);
+    setSubmitLoader(!submitLoader);
   };
 
   const companyHandler = () => {
@@ -185,24 +201,27 @@ const CreateBooking: React.FC<EventProps> = (
             {displayCalendar && (
               <p className="mb-2 text-emerald-500">
                 <Icon name={<FaRegCalendarAlt />} />
-                {startDateTime.toString()}
+                {new Date(startDateTime).toUTCString()}
               </p>
             )}
           </div>
           <form onSubmit={bookMeeting} id="create-booking-form">
             {isBookinPage && (
-              <div className="mt-8 sm:mt-0 sm:min-w-[455px] w-full sm:w-1/2 sm:pl-4 sm:pr-6 sm:dark:border-gray-700 md:w-1/3">
-                <DateTimePicker
-                  minDetail="month"
-                  clearIcon=""
-                  onChange={(value: any) => onChange(value)}
-                  value={calendarValue}
-                  isCalendarOpen={true}
-                  minDate={calendarValue}
-                  isClockOpen={false}
-                  closeWidgets={false}
-                  calendarClassName="rounded-sm react-datetime-picker__calendar react-calendar__tile react-calendar__month-view__weekdays react-calendar__tile--active react-datetime-picker__calendar--open text-white border border-gray-700 shadow-sm react-datetime-picker__inputGroup"
+              <div className="mt-8 sm:mt-0 sm:min-w-[455px] w-full sm:w-1/2 sm:pl-4 sm:pr-6 sm:border-gray-700 md:w-1/3">
+                <input
+                  id="start-date"
+                  onChange={(e) => onChange(e.target.value)}
+                  className="text-black"
+                  type="datetime-local"
+                  min={new Date().toISOString().slice(0, 16) as any}
+                  required={true}
                 />
+                <button
+                  type="button"
+                  onClick={nextHandler}
+                  className="mt-3 inline-flex items-center px-3 py-2 text-sm font-medium rounded-sm relative border border-transparent hover:bg-opacity-90 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-neutral-900 w-full justify-center bg-neutral-900">
+                  Next
+                </button>
               </div>
             )}
             {isBookingConfirmationPage && (
