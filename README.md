@@ -55,3 +55,8 @@ A Minimum Viable Product (MVP) of a scheduling tool like [https://cal.com](cal.c
 1. `npx prisma migrate dev` to run migrations.
 
 2. `npx prisma studio` to open Prisma Studio in the browser.
+
+## Project Screenshots
+![Index Page](/public/screen-1.png)
+![Booking Page](/public/screen-2.png)
+![Dashboard Page](/public/screen-3.png)
