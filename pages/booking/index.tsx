@@ -92,7 +92,7 @@ const CreateBooking: React.FC<EventProps> = (
    */
   const nextHandler = () => {
     const startDate = document.getElementById("start-date") as HTMLElement;
-    if (startDate.value === "") {
+    if (String(startDate.value) === "") {
       alert("Select a date and time for the scheduled meeting.");
       return;
     }
