@@ -1,8 +1,10 @@
+import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
-import React from "react";
+import { useState, useEffect } from "react";
 
 import { routes } from "../../../../helpers/config/constants";
 import Bookings from "../Bookings";
+import LoadingScreen from "../LoadingScreen";
 import Nav from "../Nav";
 import NoBookingFound from "../NoBookingFound";
 import Sidebar from "../Sidebar";
@@ -15,15 +17,32 @@ interface Props {
  * @description Get the all past bookings
  * @return props: object
  */
-export const getServerSideProps: GetServerSideProps = async () => {
-  const pastBookings = await fetch(`http://localhost:3330${routes.getPastBookings}`);
-  const bookings = await pastBookings.json();
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const pastBookings = await axios.get(`http://localhost:3330${routes.getPastBookings}`, {
+    withCredentials: true,
+    headers: {
+      Cookie: String(req.headers.cookie),
+    },
+  });
+
+  const bookings = pastBookings.data;
+
   return {
     props: { pastBookings: bookings },
   };
 };
 
 const Past: NextPage<Props> = ({ pastBookings }: any) => {
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (pastBookings.length > 0) {
+        setLoading(true);
+      }
+    }, 6000);
+  }, [pastBookings.length]);
+
   return (
     <Sidebar>
       <div className="py-8">
@@ -42,7 +61,15 @@ const Past: NextPage<Props> = ({ pastBookings }: any) => {
             <div className="-mx-4 flex flex-col sm:mx-auto">
               <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                  {pastBookings.length > 0 ? <Bookings bookings={pastBookings} /> : <NoBookingFound />}
+                  {loading ? (
+                    pastBookings.length > 0 ? (
+                      <Bookings bookings={pastBookings} />
+                    ) : (
+                      <NoBookingFound />
+                    )
+                  ) : (
+                    <LoadingScreen />
+                  )}
                 </div>
               </div>
             </div>

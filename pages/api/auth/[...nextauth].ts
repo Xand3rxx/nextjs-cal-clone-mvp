@@ -51,7 +51,7 @@ export default NextAuth({
         session.id = token.id;
       }
 
-      return session;
+      return Promise.resolve(session);
     },
   },
   secret: "test",

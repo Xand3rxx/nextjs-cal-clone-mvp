@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext } from "next";
 import { getCsrfToken, signIn } from "next-auth/react";
-// import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -8,8 +8,7 @@ import { useState } from "react";
 import { getSession } from "@helpers/auth";
 
 import { routes } from "../../helpers/config/constants";
-
-// import logo from "../../public/logo-white.svg";
+import logo from "../../public/logo-white.svg";
 
 interface ServerSideProps {
   csrfToken: string;
@@ -53,10 +52,11 @@ export default function Login({ csrfToken }: ServerSideProps) {
   return (
     <div className="flex min-h-screen flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="justify-center">
-          {/* <Image className="mx-auto h-6" src={logo} alt="Cal.com(Clone) Logo" width={110} height={24} /> */}
+        <div className="text-center justify-center">
+          <Image className="mx-auto h-6" src={logo} alt="Cal.com(Clone) Logo" width={110} height={24} />
+          (Clone)
         </div>
-        <h2 className=" mt-6 text-center text-3xl text-neutral-200">Cal.com(Clone)</h2>
+        {/* <h2 className=" mt-6 text-center text-3xl text-neutral-200">Cal.com(Clone)</h2> */}
         <h2 className=" mt-6 text-center text-3xl text-neutral-300">Sign in to your account</h2>
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">

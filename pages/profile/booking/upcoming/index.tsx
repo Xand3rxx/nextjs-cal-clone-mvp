@@ -1,8 +1,11 @@
+import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
 import React from "react";
+import { useState, useEffect } from "react";
 
 import { routes } from "../../../../helpers/config/constants";
 import Bookings from "../Bookings";
+import LoadingScreen from "../LoadingScreen";
 import Nav from "../Nav";
 import NoBookingFound from "../NoBookingFound";
 import Sidebar from "../Sidebar";
@@ -15,16 +18,35 @@ interface Props {
  * @description Get the all upcoming bookings
  * @return props: object
  */
-export const getServerSideProps: GetServerSideProps = async () => {
-  const upcomingBookings = await fetch(`http://localhost:3330${routes.getUpcomingBookings}`);
-  const bookings = await upcomingBookings.json();
-  console.log("seses", bookings);
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  // const upcomingBookings = await fetch(`http://localhost:3330${routes.getUpcomingBookings}`);
+  // const bookings = await upcomingBookings.json();
+
+  const upcomingBookings = await axios.get(`http://localhost:3330${routes.getUpcomingBookings}`, {
+    withCredentials: true,
+    headers: {
+      Cookie: String(req.headers.cookie),
+    },
+  });
+
+  const bookings = upcomingBookings.data;
+
   return {
     props: { upcomingBookings: bookings },
   };
 };
 
 const Upcoming: NextPage<Props> = ({ upcomingBookings }: any) => {
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (upcomingBookings.length > 0) {
+        setLoading(true);
+      }
+    }, 6000);
+  }, [upcomingBookings.length]);
+
   return (
     <Sidebar>
       <div className="py-8">
@@ -43,10 +65,14 @@ const Upcoming: NextPage<Props> = ({ upcomingBookings }: any) => {
             <div className="-mx-4 flex flex-col sm:mx-auto">
               <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                  {upcomingBookings.length > 0 ? (
-                    <Bookings bookings={upcomingBookings} />
+                  {loading ? (
+                    upcomingBookings.length > 0 ? (
+                      <Bookings bookings={upcomingBookings} />
+                    ) : (
+                      <NoBookingFound />
+                    )
                   ) : (
-                    <NoBookingFound />
+                    <LoadingScreen />
                   )}
                 </div>
               </div>

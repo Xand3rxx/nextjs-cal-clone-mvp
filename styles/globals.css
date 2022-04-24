@@ -30,7 +30,7 @@
     color: #909090 !important;
   }
   .react-calendar__month-view__weekdays {
-    color: #292929 !important;
+    @apply text-white;
   }
   .react-calendar__tile--active {
     background-color: #494949 !important;
@@ -50,5 +50,8 @@
   }
   .react-datetime-picker__wrapper {
     @apply text-white;
+  }
+  .react-datetime-picker__inputGroup {
+    @apply w-full;
   }
 }

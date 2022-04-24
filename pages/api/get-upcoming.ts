@@ -4,28 +4,22 @@ import { getSession } from "next-auth/react";
 import prisma from "../../helpers/prisma";
 
 /**
- * @description Find the Events that matches the filter.
+ * @description Find the the authenticated user Events greater than todays date.
  * @param userId: string
  * @param date: string
  * @return event: array
  * */
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   const session = await getSession({ req });
-  console.log("Current ", session?.user?.email);
 
-  // if (!session) {
-  //   res.status(401).json({ message: "Not authenticated" });
-  //   return;
-  // }
-
-  const userId = await prisma.user.findFirst({
-    where: { email: String(session?.user?.email) },
-    select: { id: true },
-  });
+  if (!session) {
+    res.status(401).json({ message: "You must be signed in to use this route." });
+    return;
+  }
 
   const upcomingBookings = await prisma.event.findMany({
     where: {
-      userId: userId?.id,
+      userId: String(session?.id),
       startDateTime: {
         gte: new Date(Date.now()),
       },

@@ -23,15 +23,18 @@ model User {
 }
 
 model EventType {
-  id           Int     @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   title        String
   url          String?
-  duration     Int     @default(2)
+  duration     Int      @default(2)
   description  String?
-  location     String  @default("Google Meet")
-  meetingLink  String  @map(name: "meeting_link")
+  location     String   @default("Google Meet")
+  meetingLink  String   @map(name: "meeting_link")
   availability String
-  Event        Event[]
+  createdAt    DateTime @default(now()) @map(name: "created_at")
+  updatedAt    DateTime @updatedAt @map(name: "updated_at")
+
+  Event Event[]
 }
 
 model Event {
@@ -47,6 +50,7 @@ model Event {
   attendeeId    String
   company       Company?  @relation(fields: [companyId], references: [id])
   companyId     String?
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
 }
 
 model Attendee {

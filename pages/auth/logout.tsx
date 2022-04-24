@@ -1,4 +1,7 @@
 const Logout = () => {
+  const home = () => {
+    window.location.href = "/";
+  };
   return (
     <section className="flex min-h-screen flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md"></div>
@@ -26,9 +29,11 @@ const Logout = () => {
               </div>
             </div>
           </div>
-          <button className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-sm relative border border-transparent bg-neutral-900 hover:bg-opacity-90 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-neutral-900 w-full justify-center">
+          <button
+            className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-sm relative border border-transparent bg-neutral-900 hover:bg-opacity-90 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-neutral-900 w-full justify-center"
+            onClick={home}>
             {" "}
-            Go back to the login page
+            Back to Home
           </button>
         </div>
         <div className="mt-4 text-center text-sm text-neutral-600"></div>

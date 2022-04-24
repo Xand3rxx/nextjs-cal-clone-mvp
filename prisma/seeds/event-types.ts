@@ -1,17 +1,9 @@
-// import { hashPassword } from "@helpers/auth";
-
-// export async function passwordHandler(value: string) {
-//   const password = await Promise.re(hashPassword(value));
-
-//   return await password;
-// }
-
 export const EventTypes = [
   {
     title: "30 Min Meeting",
     url: "/30-min-meeting",
     duration: 30,
-    description: "A brief meeting for 30 minutes discussions.",
+    description: "A thirty minutes discussion session.",
     location: "Google Meet",
     meetingLink: "https://meet.google.com/vqi-xnvk-uda",
     availability: "Mon - Fri, 9:00 AM - 5:00 PM",

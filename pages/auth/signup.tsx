@@ -14,7 +14,7 @@ export default function Signup() {
   useEffect(() => {
     async function redirectOnLogin() {
       const session = await getSession();
-      if (session) window.location.replace("/");
+      if (session) window.location.replace(routes.home);
     }
     redirectOnLogin();
   }, []);
@@ -29,14 +29,14 @@ export default function Signup() {
     setIsSubmitting(true);
 
     return axios
-      .post(routes.register, {
+      .post(`http://localhost:3330${routes.signUp}`, {
         name,
         email,
         password,
       })
       .then(() => {
-        alert("success");
-        window.location.replace(routes.upcomingBooking);
+        alert("Account created successfully!");
+        window.location.replace(routes.login);
       })
       .catch((e) => {
         setIsSubmitting(false);

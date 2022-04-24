@@ -1,6 +1,7 @@
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { ReactNode } from "react";
+import { useEffect } from "react";
 
 import Shell from "@components/Shell";
 
@@ -8,12 +9,15 @@ import { routes } from "../../../helpers/config/constants";
 import avatar from "../../../public/blank.png";
 
 const Sidebar = (props: { children: ReactNode }) => {
-  const { data: session } = useSession();
-  const signOutHandler = () => {
-    // window.location.href = "/api/auth/logout";
-    window.location.href = "/api/auth/signout";
-    // /api/auth/signout
-  };
+  const { data: session, status } = useSession();
+  // const signOutHandler = () => {
+  //   window.location.href = "/api/auth/signout";
+  // };
+  const loading = status === "loading";
+
+  useEffect(() => {
+    if (!session) window.location.replace(routes.home);
+  }, [loading, session]);
   return (
     <Shell>
       <div className="flex h-screen overflow-hidden backgroundSlateCustom" data-testid="dashboard-shell">
@@ -38,7 +42,7 @@ const Sidebar = (props: { children: ReactNode }) => {
                 <nav className="mt-2 flex-1 space-y-1 bg-[#292929] px-2 lg:mt-5">
                   <a
                     className="text-neutral-500 hover:bg-gray-50 hover:text-neutral-900 group flex items-center rounded-sm px-2 py-2 text-sm font-medium"
-                    href="#">
+                    href={routes.createMeetingPage}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 20 20"
@@ -50,7 +54,7 @@ const Sidebar = (props: { children: ReactNode }) => {
                         d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
                         clipRule="evenodd"></path>
                     </svg>
-                    <span className="ml-3 hidden lg:inline">Event Types</span>
+                    <span className="ml-3 hidden lg:inline">Create Meeting</span>
                   </a>
                   <Link href={routes.upcomingBooking}>
                     <a
@@ -122,7 +126,12 @@ const Sidebar = (props: { children: ReactNode }) => {
               <div role="menuitem" className="text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 ">
                 <a
                   className="flex cursor-pointer px-4 py-2 text-sm text-neutral-500 hover:bg-gray-100 hover:text-gray-900"
-                  onClick={signOutHandler}>
+                  // onClick={signOutHandler}>
+                  onClick={() =>
+                    signOut({
+                      callbackUrl: `${routes.logout}`,
+                    })
+                  }>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"

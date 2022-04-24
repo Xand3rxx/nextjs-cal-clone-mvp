@@ -8,6 +8,7 @@ export const routes = {
   BASE_URL: "http:http://localhost:3330/",
   bookMeeting: "/api/api-service",
   confirmationPage: "/booking/[id]",
+  createMeetingPage: "/booking",
   upcomingBooking: "/profile/booking/upcoming",
   pastBooking: "/profile/booking/past",
   forgotPassword: "/auth/forgot-password",
@@ -19,4 +20,5 @@ export const routes = {
   login: "/auth/login",
   logout: "/auth/logout",
   register: "/auth/signup",
+  signUp: "/api/auth/signup",
 };

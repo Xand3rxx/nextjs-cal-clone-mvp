@@ -1,4 +1,5 @@
 import { GetServerSideProps } from "next";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 import { routes } from "../../helpers/config/constants";
@@ -30,6 +31,8 @@ const convertDate = (dateString: string) => {
 };
 
 const Confirmation = (props: any) => {
+  const { data: session } = useSession();
+
   return (
     <section className="h-screen">
       <main className="mx-auto max-w-3xl rounded-sm border-color-custom">
@@ -74,7 +77,7 @@ const Confirmation = (props: any) => {
                         {new Date(props?.startDateTime).toUTCString()}
                         <br />
                         {convertDate(props?.startDateTime)} - {props?.eventType?.duration} mins{" "}
-                        <span className="text-white">(Africa/Lagos)</span>
+                        {/* <span className="text-white">(Africa/Lagos)</span> */}
                       </div>
                       <div className="mt-6 font-medium">Where</div>
                       <div className="col-span-2 mt-6">
@@ -166,13 +169,11 @@ const Confirmation = (props: any) => {
                     </button>
                   </form>
                 </div>
-                <div className="mt-4 relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-gray-500">Already have an account?</span>
-                </div>
-                <div className="mt-4 gap-2">
-                  <Link href={routes.upcomingBooking}>
+
+                <div className="mt-8 gap-2">
+                  <Link href={session ? routes.upcomingBooking : routes.home}>
                     <a className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-sm relative border border-transparent hover:bg-opacity-90 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-neutral-900 w-full justify-center bg-neutral-900">
-                      Back To Home
+                      {session ? "Back to Dashboard" : "Back To Home"}
                     </a>
                   </Link>
                 </div>

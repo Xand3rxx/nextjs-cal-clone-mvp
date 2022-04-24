@@ -1,322 +1,126 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import React, { useState, useEffect } from "react";
-import "react-calendar/dist/Calendar.css";
-import "react-clock/dist/Clock.css";
-import "react-datetime-picker/dist/DateTimePicker.css";
-import DateTimePicker from "react-datetime-picker/dist/entry.nostyle";
-import { FaInfoCircle, FaClock, FaLink, FaLocationArrow, FaRegCalendarAlt } from "react-icons/fa";
 
 import { routes } from "../helpers/config/constants";
+import SectionImage from "../public/avoid-meeting-overload.svg";
+import WhiteLogo from "../public/logo-white.svg";
 
-// Type cast props
-export type EventProps = {
-  id: number;
-  title: string;
-  url: string;
-  duration: number;
-  description: string;
-  location: string;
-  meetingLink: string;
-  availability: string;
-};
-
-export type IconProps = {
-  name?: JSX.Element | JSX.Element[];
-};
-
-/**
- * @description Get the first EventType on the `EventType` table
- * @return props: object
- */
-export const getServerSideProps: GetServerSideProps = async () => {
-  const eventTypeRequest = await fetch(`http://localhost:3330/${routes.getDefaultEventType}`);
-  const eventType = await eventTypeRequest.json();
-
-  return {
-    props: eventType,
-  };
-};
-
-// Component for dynamic react icons
-export const Icon = ({ name }: IconProps) => (
-  <span className="mr-[10px] ml-[2px] -mt-0 inline-block h-3.5 w-3.5 text-gray-400">{name}</span>
-);
-
-const Index: React.FC<EventProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  //Declare contants
-  const { data: session, status } = useSession();
-  const loading = status === "loading";
-  const [calendarValue, setCalendarValue] = useState(new Date());
-  const [isBookinPage, setIsBookinPage] = useState(true);
-  const [isBookingConfirmationPage, setIsBookingConfirmationPage] = useState(false);
-  const [displayCalendar, setDisplayCalendar] = useState(false);
-  const [displayCompany, setDisplayCompany] = useState(false);
-
-  // Form constants
-  const [startDateTime, setStartDateTime] = useState("");
-  const [endDateTime, setEndDateTime] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [companyEmail, setCompanyEmail] = useState("");
-  const [notes, setNotes] = useState("");
-  const router = useRouter();
-
-  /**
-   * @description set dispalay of elements to true
-   * @param value: string
-   * @return boolean true
-   */
-  const onChange = (value: any) => {
-    setTimeout(() => {
-      setCalendarValue(calendarValue);
-    }, 2000);
-    setDisplayCalendar(!displayCalendar);
-    setIsBookinPage(!isBookinPage);
-    setIsBookingConfirmationPage(!isBookingConfirmationPage);
-    setStartDateTime(value);
-    const dt = new Date(value);
-    dt.setMinutes(dt.getMinutes() + props?.duration);
-    setEndDateTime(dt);
-  };
-
-  /**
-   * @description set dispalay of elements to false
-   * @return boolean false
-   */
-  const cancelHandler = () => {
-    setDisplayCalendar(!displayCalendar);
-    setIsBookinPage(!isBookinPage);
-    setIsBookingConfirmationPage(!isBookingConfirmationPage);
-  };
-
-  const companyHandler = () => {
-    setDisplayCompany(!displayCompany);
-  };
-
-  useEffect(() => {
-    if (session) window.location.replace(routes.upcomingBooking);
-  }, [loading, session]);
-
-  // const formReset = () => {
-  //   setStartDateTime("");
-  //   setName("");
-  //   setEmail("");
-  //   setCompanyName("");
-  //   setCompanyEmail("");
-  //   setNotes("");
-  // };
-
-  const bookMeeting = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    try {
-      // const router = useRouter();
-      const body = { name, email, companyName, companyEmail, notes, startDateTime, endDateTime };
-      const payload = await fetch(routes.bookMeeting, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      const response = await payload.json();
-
-      router.push({
-        pathname: routes.confirmationPage,
-        query: { id: response.data.id },
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+const Index = () => {
+  const { data: session } = useSession();
 
   return (
-    <section className="max-w-5xl mx-auto my-0 duration-500 ease-in-out transition-max-width md:my-24 ">
-      <Link href="/auth/login">
-        <a className="p-1 text-white bg-blue-800">LOGIN</a>
-      </Link>
-      <Link href="/auth/signup">
-        <a className="p-1 ml-2 text-white bg-blue-800">SIGN UP</a>
-      </Link>
-
-      <main className="max-w-5xl min-h-full rounded-sm border-color-custom backgroundSlateCustom">
-        <div className="px-4 sm:flex sm:p-4 sm:py-5">
-          <div className="px-4 pr-8 sm:flex sm:p-4 sm:py-5 sm:border-r sm:dark:border-gray-700 md:flex md:flex-col sm:w-1/3">
-            <ul className=""></ul>
-            <h2 className="mt-3 font-medium text-gray-300">Anthony Joboy</h2>
-            <h1 className="mb-4 text-xl font-semibold text-white">{props?.title}</h1>
-            <p className="mb-2 text-white">
-              <Icon name={<FaInfoCircle />} />
-              {props?.description}
+    <>
+      <div className="fixed top-0 left-0 right-0 z-20 border border-t-0 border-l-0 border-r-0 border-gray-700 bg-black">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex items-center justify-between py-6 md:justify-start md:space-x-10">
+            <div className="flex justify-start px-8 lg:w-0 lg:flex-1 -ml-1">
+              <a href="/">
+                <div>
+                  <span className="brand-logo font-cal inline font-bold">
+                    <span className="sr-only">Cal.com(Clone)</span>
+                    <img className="h-5 w-auto inline" src={WhiteLogo.src} alt="Cal.com logo" />
+                    (Clone)
+                  </span>
+                </div>
+              </a>
+            </div>
+            <div className="-my-2 mr-2 md:hidden">
+              <button
+                className="inline-flex items-center justify-center bg-black px-2 py-2 text-white hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-transparent"
+                id="headlessui-popover-button-5"
+                type="button"
+                aria-expanded="false">
+                <span className="sr-only">Open menu</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  className="h-6 w-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+              </button>
+            </div>
+            <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
+              <nav className="hidden space-x-4 md:flex">
+                <Link href={session ? routes.upcomingBooking : routes.login}>
+                  <a className="px-7 py-2 text-base text-gray-300 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 hover:text-white ">
+                    {session ? "Dashboard" : "Login"}
+                  </a>
+                </Link>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      <section>
+        <div className=" -mt-1.5 mx-auto block max-w-7xl py-10 lg:flex">
+          <div className="w-full px-7 lg:w-1/2">
+            <h3 className="font-cal mt-[185px] mb-4 text-3xl font-medium text-gray-300">
+              Avoid meeting overload
+            </h3>
+            <p className="text-gray-400">
+              Limit people from booking too many meetings per day or week or too close together. Set minimum
+              notice periods so you don’t get any surprise meetings.
             </p>
-            <p className="mb-2 text-white">
-              <Icon name={<FaClock />} />
-              {props?.duration} Minutes
-            </p>
-            <p className="mb-2 text-white">
-              <Icon name={<FaLocationArrow />} />
-              {props?.location}
-            </p>
-            <p className="mb-2 text-white">
-              <Icon name={<FaLink />} />
-              {props?.meetingLink}
-            </p>
-
-            {displayCalendar && (
-              <p className="mb-2 text-emerald-500">
-                <Icon name={<FaRegCalendarAlt />} />
-                {startDateTime.toString()}
-              </p>
+            <hr className="my-10 w-24 border-neutral-700" />
+            <div className="font-cal space-y-2 font-medium">
+              <div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  className="mr-1 -mt-1 inline h-7 w-7 text-gray-300">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                </svg>{" "}
+                Set buffers before &amp; after events
+              </div>
+              <div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  className="mr-1 -mt-1 inline h-7 w-7 text-gray-300">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                </svg>{" "}
+                Set minimum notice periods
+              </div>
+              <div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  className="mr-1 -mt-1 inline h-7 w-7 text-gray-300">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                </svg>{" "}
+                Set limits on how often you can get booked
+              </div>
+            </div>
+            {!session && (
+              <Link href={routes.createMeetingPage}>
+                <a className="mt-8 inline-block bg-neutral-900 px-4 py-3 font-medium text-white sm:text-sm">
+                  Get Started
+                </a>
+              </Link>
             )}
           </div>
-          <form onSubmit={bookMeeting} id="create-booking-form">
-            {isBookinPage && (
-              <div className="mt-8 sm:mt-0 sm:min-w-[455px] w-full sm:w-1/2 sm:pl-4 sm:pr-6 sm:dark:border-gray-700 md:w-1/3">
-                <DateTimePicker
-                  minDetail="month"
-                  clearIcon=""
-                  onChange={(value: any) => onChange(value)}
-                  value={calendarValue}
-                  isCalendarOpen={true}
-                  minDate={calendarValue}
-                  isClockOpen={false}
-                  closeWidgets={false}
-                  calendarClassName="rounded-sm react-datetime-picker__calendar react-calendar__tile react-calendar__month-view__weekdays react-calendar__tile--active react-datetime-picker__calendar--open text-white border border-gray-700 shadow-sm"
-                />
-              </div>
-            )}
-            {isBookingConfirmationPage && (
-              <div className="mt-8 sm:mt-0 sm:min-w-[455px] w-full sm:w-1/2 sm:pl-4 sm:pr-6 text-white md:w-1/3">
-                <input
-                  type="hidden"
-                  name="startDateTime"
-                  className="hidden"
-                  value={startDateTime}
-                  onChange={(e) => setStartDateTime(startDateTime)}
-                />
-                <input
-                  type="hidden"
-                  name="endDateTime"
-                  className="hidden"
-                  value={endDateTime}
-                  onChange={(e) => setEndDateTime(endDateTime)}
-                />
-                <div className="mb-4">
-                  <label htmlFor="name" className="block text-sm font-medium text-white">
-                    Your Name
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      name="name"
-                      type="text"
-                      id="name"
-                      required={true}
-                      className="block w-full px-3 py-2 mt-1 text-white border border-gray-700 rounded-sm shadow-sm bg-zinc-700 focus:ring-black selection:bg-green-500 sm:text-sm"
-                      placeholder="John Doe"
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="email" className="block text-sm font-medium text-white">
-                    Email Address
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="email"
-                      autoComplete="email"
-                      autoCorrect="off"
-                      inputMode="email"
-                      id="email"
-                      name="email"
-                      required={true}
-                      className="block w-full px-3 py-2 mt-1 text-white border border-gray-700 rounded-sm shadow-sm bg-zinc-700 focus:border-neutral-800 focus:outline-none focus:ring-1 sm:text-sm focus:ring-black selection:bg-green-500"
-                      placeholder="you@example.com"
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="guests"
-                    onClick={companyHandler}
-                    className="block mb-1 text-sm font-medium text-white hover:cursor-pointer">
-                    + Additional Guests
-                  </label>
-                </div>
-                {displayCompany && (
-                  <>
-                    <div className="mb-4">
-                      <label htmlFor="company-name" className="block text-sm font-medium text-white">
-                        Company Name
-                      </label>
-                      <input
-                        type="text"
-                        autoComplete="text"
-                        autoCorrect="off"
-                        inputMode="text"
-                        id="company-name"
-                        name="companyName"
-                        required={true}
-                        className="block w-full px-3 py-2 mt-1 text-white border border-gray-700 rounded-sm shadow-sm bg-zinc-700 focus:border-neutral-800 focus:outline-none focus:ring-1 sm:text-sm focus:ring-black selection:bg-green-500"
-                        placeholder="Simba City"
-                        onChange={(e) => setCompanyName(e.target.value)}
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label htmlFor="company-email" className="block text-sm font-medium text-white">
-                        Company Email Address
-                      </label>
-                      <div className="mt-1">
-                        <input
-                          type="email"
-                          autoComplete="email"
-                          autoCorrect="off"
-                          inputMode="email"
-                          name="companyEmail"
-                          id="company-email"
-                          required={true}
-                          className="block w-full px-3 py-2 mt-1 text-white border border-gray-700 rounded-sm shadow-sm bg-zinc-700 focus:border-neutral-800 focus:outline-none focus:ring-1 sm:text-sm focus:ring-black selection:bg-green-500"
-                          placeholder="company@example.com"
-                          onChange={(e) => setCompanyEmail(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
-                <div className="mb-4">
-                  <label htmlFor="notes" className="block mb-1 text-sm font-medium text-white">
-                    Additional Notes
-                  </label>
-                  <textarea
-                    name="notes"
-                    id="notes"
-                    rows={3}
-                    className="block w-full text-white border-gray-700 rounded-sm shadow-sm focus:ring-black bg-zinc-700 selection:bg-green-500 sm:text-sm"
-                    placeholder="Please share anything that will help prepare for our meeting."
-                    onChange={(e) => setNotes(e.target.value)}></textarea>
-                </div>
-                <div className="flex items-start space-x-2 rtl:space-x-reverse">
-                  <button
-                    type="submit"
-                    className="relative inline-flex items-center px-3 py-2 text-sm text-gray-700 bg-transparent border border-gray-800 rounded-sm bg-gray-50 font-m hover:text-gray-900 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-neutral-900 hover:bg-gray-100">
-                    Confirm
-                  </button>
-                  <button
-                    type="button"
-                    onClick={cancelHandler}
-                    className="relative inline-flex items-center px-3 py-2 text-sm font-medium border border-transparent rounded-sm hover:bg-opacity-90 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-neutral-900">
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-          </form>
+          <div className="relative mt-[66px] w-full max-w-[612px] px-7 sm:px-0 lg:w-1/2">
+            <img className="-mr-16 w-full lg:w-auto" src={SectionImage.src} alt="Avoid Meeting Overload" />
+          </div>
         </div>
-      </main>
-    </section>
+      </section>
+    </>
   );
 };
 
