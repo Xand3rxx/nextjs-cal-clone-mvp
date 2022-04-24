@@ -11,7 +11,7 @@ import { routes } from "../../helpers/config/constants";
  */
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const id = context;
-  const eventRequest = await fetch(`http://localhost:3330${routes.getEvent}/${id.params?.id}`);
+  const eventRequest = await fetch(`${process.env.NEXTAUTH_URL}/${routes.getEvent}/${id.params?.id}`);
   const event = await eventRequest.json();
   return {
     props: event,
