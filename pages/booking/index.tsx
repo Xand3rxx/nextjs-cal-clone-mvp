@@ -6,7 +6,8 @@ import React, { useState } from "react";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 import "react-datetime-picker/dist/DateTimePicker.css";
-import DateTimePicker from "react-datetime-picker/dist/entry.nostyle";
+// import DateTimePicker from "react-datetime-picker/dist/entry.nostyle";
+import DateTimePicker from "react-datetime-picker/dist/entry";
 import { FaInfoCircle, FaClock, FaLink, FaLocationArrow, FaRegCalendarAlt } from "react-icons/fa";
 
 import { routes } from "../../helpers/config/constants";
