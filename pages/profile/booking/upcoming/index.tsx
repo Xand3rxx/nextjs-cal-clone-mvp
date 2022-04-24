@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   // const upcomingBookings = await fetch(`http://localhost:3330${routes.getUpcomingBookings}`);
   // const bookings = await upcomingBookings.json();
 
-  const upcomingBookings = await axios.get(`http://localhost:3330${routes.getUpcomingBookings}`, {
+  const upcomingBookings = await axios.get(`${process.env.NEXTAUTH_URL}/${routes.getUpcomingBookings}`, {
     withCredentials: true,
     headers: {
       Cookie: String(req.headers.cookie),

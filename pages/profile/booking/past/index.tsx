@@ -18,7 +18,7 @@ interface Props {
  * @return props: object
  */
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const pastBookings = await axios.get(`http://localhost:3330${routes.getPastBookings}`, {
+  const pastBookings = await axios.get(`${process.env.NEXTAUTH_URL}/${routes.getPastBookings}`, {
     withCredentials: true,
     headers: {
       Cookie: String(req.headers.cookie),

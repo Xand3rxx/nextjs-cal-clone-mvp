@@ -28,7 +28,7 @@ export type IconProps = {
  * @return props: object
  */
 export const getServerSideProps: GetServerSideProps = async () => {
-  const eventTypeRequest = await fetch(`http://localhost:3330/${routes.getDefaultEventType}`);
+  const eventTypeRequest = await fetch(`${process.env.NEXTAUTH_URL}/${routes.getDefaultEventType}`);
   const eventType = await eventTypeRequest.json();
 
   return {
