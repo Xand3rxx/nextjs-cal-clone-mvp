@@ -56,6 +56,7 @@ const CreateBooking: React.FC<EventProps> = (
   const [isBookingConfirmationPage, setIsBookingConfirmationPage] = useState(false);
   const [displayCalendar, setDisplayCalendar] = useState(false);
   const [displayCompany, setDisplayCompany] = useState(false);
+  const [submitLoader, setSubmitLoader] = useState(false);
 
   // Form constants
   const [startDateTime, setStartDateTime] = useState("");
@@ -101,6 +102,7 @@ const CreateBooking: React.FC<EventProps> = (
 
   const bookMeeting = async (e: React.SyntheticEvent) => {
     e.preventDefault();
+    setSubmitLoader(true);
     try {
       // const router = useRouter();
       const body = { name, email, companyName, companyEmail, notes, startDateTime, endDateTime };
@@ -111,6 +113,10 @@ const CreateBooking: React.FC<EventProps> = (
       });
 
       const response = await payload.json();
+
+      if (response.length > 0) {
+        setSubmitLoader(false);
+      }
 
       router.push({
         pathname: routes.confirmationPage,
@@ -217,7 +223,7 @@ const CreateBooking: React.FC<EventProps> = (
                 />
                 <div className="mb-4">
                   <label htmlFor="name" className="block text-sm font-medium text-white">
-                    Your Name
+                    Recipient Name
                   </label>
                   <div className="mt-1">
                     <input
@@ -233,7 +239,7 @@ const CreateBooking: React.FC<EventProps> = (
                 </div>
                 <div className="mb-4">
                   <label htmlFor="email" className="block text-sm font-medium text-white">
-                    Email Address
+                    Recipient Email Address
                   </label>
                   <div className="mt-1">
                     <input
@@ -245,7 +251,7 @@ const CreateBooking: React.FC<EventProps> = (
                       name="email"
                       required={true}
                       className="block w-full px-3 py-2 mt-1 text-white border border-gray-700 rounded-sm shadow-sm bg-zinc-700 focus:border-neutral-800 focus:outline-none focus:ring-1 sm:text-sm focus:ring-black selection:bg-green-500"
-                      placeholder="you@example.com"
+                      placeholder="recipient@mailnator.com"
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
@@ -314,7 +320,27 @@ const CreateBooking: React.FC<EventProps> = (
                   <button
                     type="submit"
                     className="relative inline-flex items-center px-3 py-2 text-sm text-gray-700 bg-transparent border border-gray-800 rounded-sm bg-gray-50 font-m hover:text-gray-900 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-neutral-900 hover:bg-gray-100">
-                    Confirm
+                    {submitLoader && (
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-900 justify-center"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24">
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    )}
+                    {submitLoader && "Processing..."}
+                    {!submitLoader && "Confirm"}
                   </button>
                   <button
                     type="button"

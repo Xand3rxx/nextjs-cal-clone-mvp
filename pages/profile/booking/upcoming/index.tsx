@@ -37,15 +37,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Upcoming: NextPage<Props> = ({ upcomingBookings }: any) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setTimeout(() => {
-      if (upcomingBookings.length > 0) {
-        setLoading(true);
-      }
+      setLoading(false);
     }, 6000);
-  }, [upcomingBookings.length]);
+  }, []);
 
   return (
     <Sidebar>
@@ -65,7 +63,7 @@ const Upcoming: NextPage<Props> = ({ upcomingBookings }: any) => {
             <div className="-mx-4 flex flex-col sm:mx-auto">
               <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                  {loading ? (
+                  {!loading ? (
                     upcomingBookings.length > 0 ? (
                       <Bookings bookings={upcomingBookings} />
                     ) : (

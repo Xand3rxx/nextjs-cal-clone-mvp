@@ -32,14 +32,23 @@ A Minimum Viable Product (MVP) of a scheduling tool like [https://cal.com](cal.c
 
 2. Set the `DATABASE_URL` in the `.env` file to point to your existing database. If your database has no tables yet, read [Getting started](https://pris.ly/d/getting-started).
 
-3. Set the `provider` of the `datasource` block in `schema.prisma` to match `postgresql` database.
+3. Set the `NEXTAUTH_URL` in the `.env` file to point to your client side authentication path
+   i.e
 
-4. Run `npx prisma db push` executes the changes required to make your database schema reflect the state of your Prisma schema.
-5. Seed the database using `npx prisma db seed`.
+```
+   DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+   NEXTAUTH_URL="http://localhost:3330/"
+```
 
-6. Run `npx prisma studio` to use Prisma Studio's interface and modify the seeded `User` and `EventType` records(if need be).
+4. Set the `provider` of the `datasource` block in `schema.prisma` to match `postgresql` database.
 
-7. Because Prisma Client is tailored to your own schema, you need to update it every time your Prisma schema file is changing by running the following command: `npx prisma generate`.
+5. Run `npx prisma db push` executes the changes required to make your database schema reflect the state of your Prisma schema.
+   
+6. Seed the database using `npx prisma db seed`.
+
+7. Run `npx prisma studio` to use Prisma Studio's interface and modify the seeded `User` and `EventType` records(if need be).
+
+8. Because Prisma Client is tailored to your own schema, you need to update it every time your Prisma schema file is changing by running the following command: `npx prisma generate`.
 
 # Useful Prisma Commands
 

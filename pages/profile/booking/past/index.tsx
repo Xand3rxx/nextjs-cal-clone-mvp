@@ -33,15 +33,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Past: NextPage<Props> = ({ pastBookings }: any) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setTimeout(() => {
-      if (pastBookings.length > 0) {
-        setLoading(true);
-      }
+      setLoading(false);
     }, 6000);
-  }, [pastBookings.length]);
+  }, []);
 
   return (
     <Sidebar>
@@ -61,7 +59,7 @@ const Past: NextPage<Props> = ({ pastBookings }: any) => {
             <div className="-mx-4 flex flex-col sm:mx-auto">
               <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                  {loading ? (
+                  {!loading ? (
                     pastBookings.length > 0 ? (
                       <Bookings bookings={pastBookings} />
                     ) : (
